@@ -3,15 +3,15 @@ class DashboardStats {
   final String title;
   final String value;
   final String subtitle;
-  final double percentage;
-  final bool isIncrease;
+  // final double percentage;
+  // final bool isIncrease;
 
   DashboardStats({
     required this.title,
     required this.value,
     required this.subtitle,
-    required this.percentage,
-    required this.isIncrease,
+    // required this.percentage,
+    // required this.isIncrease,
   });
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) {
@@ -19,8 +19,8 @@ class DashboardStats {
       title: json['title'] ?? '',
       value: json['value'] ?? '0',
       subtitle: json['subtitle'] ?? '',
-      percentage: (json['percentage'] ?? 0).toDouble(),
-      isIncrease: json['isIncrease'] ?? true,
+      // percentage: (json['percentage'] ?? 0).toDouble(),
+      // isIncrease: json['isIncrease'] ?? true,
     );
   }
 
@@ -29,8 +29,8 @@ class DashboardStats {
       'title': title,
       'value': value,
       'subtitle': subtitle,
-      'percentage': percentage,
-      'isIncrease': isIncrease,
+      // 'percentage': percentage,
+      // 'isIncrease': isIncrease,
     };
   }
 }

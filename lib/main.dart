@@ -1,25 +1,29 @@
+import 'package:d4tivokasi/core/constants/constants.dart';
+import 'package:d4tivokasi/core/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'providers/dashboard_provider.dart';
-import 'pages/dashboard_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:d4tivokasi/features/dosen/presentation/pages/dosen_page.dart';
+import 'package:d4tivokasi/features/profile/presentation/pages/profile_page.dart';
+import 'package:d4tivokasi/features/dashboard/presentation/pages/dashboard_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DashboardProvider(),
-      child: MaterialApp(
-        title: 'Dashboard App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: const DashboardPage(),
-      ),
-    );
+    return MaterialApp(
+      title: AppConstants.appName,
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
+      home: DashboardPage(),
+    ); // MaterialApp
   }
 }

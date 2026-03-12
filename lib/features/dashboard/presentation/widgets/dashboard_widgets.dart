@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../data/models/dashboard_model.dart';
+import 'package:d4tivokasi/core/constants/constants.dart';
+import 'package:d4tivokasi/core/theme/theme.dart';
+import 'package:d4tivokasi/features/dashboard/data/models/dashboard_model.dart';
 
-// Widget untuk menampilkan statistik card
+/// Widget untuk menampilkan statistik card (simple)
 class StatCard extends StatelessWidget {
   final DashboardStats stats;
   final bool isSelected;
@@ -37,7 +37,7 @@ class StatCard extends StatelessWidget {
                   color: AppTheme.textSecondaryColor,
                   fontWeight: FontWeight.w500,
                 ),
-              ), // Text
+              ),
               const SizedBox(height: 8),
               Text(
                 stats.value,
@@ -46,51 +46,175 @@ class StatCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: AppTheme.textPrimaryColor,
                 ),
-              ), // Text
+              ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    stats.isIncrease ? Icons.trending_up : Icons.trending_down,
-                    size: 16,
-                    color: stats.isIncrease
-                        ? AppTheme.successColor
-                        : AppTheme.errorColor,
-                  ), // Icon
-                  const SizedBox(width: 4),
-                  Text(
-                    '${stats.percentage.toStringAsFixed(1)}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: stats.isIncrease
-                          ? AppTheme.successColor
-                          : AppTheme.errorColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ), // Text
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      stats.subtitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ), // Expanded
-                ],
-              ), // Row
             ],
           ),
         ),
       ),
-    ); // Card
+    );
+  }
+}
+
+/// Modern Stat Card with Gradient and Glass Morphism
+class ModernStatCard extends StatefulWidget {
+  final DashboardStats stats;
+  final IconData icon;
+  final List<Color> gradientColors;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  const ModernStatCard({
+    Key? key,
+    required this.stats,
+    required this.icon,
+    required this.gradientColors,
+    this.isSelected = false,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  State<ModernStatCard> createState() => _ModernStatCardState();
+}
+
+class _ModernStatCardState extends State<ModernStatCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    ); // AnimationController
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() => _isPressed = true);
+        _controller.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        _controller.reverse();
+        widget.onTap?.call();
+      },
+      onTapCancel: () {
+        setState(() => _isPressed = false);
+        _controller.reverse();
+      },
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: widget.gradientColors,
+            ), // LinearGradient
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: widget.gradientColors[0].withOpacity(0.3),
+                blurRadius: widget.isSelected ? 20 : 12,
+                offset: Offset(0, widget.isSelected ? 8 : 4),
+              ), // BoxShadow
+            ],
+          ), // BoxDecoration
+          child: Stack(
+            children: [
+              // Background decoration circles
+              Positioned(
+                right: -20,
+                top: -20,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                  ), // BoxDecoration
+                ), // Container
+              ), // Positioned
+              Positioned(
+                left: -10,
+                bottom: -10,
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                  ), // BoxDecoration
+                ), // Container
+              ), // Positioned
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Icon
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ), // BoxDecoration
+                      child: Icon(widget.icon, color: Colors.white, size: 24),
+                    ), // Container
+                    const Spacer(),
+
+                    // Value
+                    Text(
+                      widget.stats.value,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
+                    ), // Text
+                    const SizedBox(height: 4),
+
+                    // Title
+                    Text(
+                      widget.stats.title,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ), // Text
+                  ],
+                ),
+              ), // Padding
+            ],
+          ), // Stack
+        ), // Container
+      ), // ScaleTransition
+    ); // GestureDetector
   }
 }
 
 /// Header Widget
-/// Widget untuk header dashboard
 class DashboardHeader extends ConsumerWidget {
   final String userName;
 
@@ -99,64 +223,137 @@ class DashboardHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: const EdgeInsets.all(AppConstants.paddingLarge),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).primaryColor,
+            Theme.of(context).primaryColor.withBlue(220),
+          ],
+        ), // LinearGradient
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(AppConstants.radiusLarge),
-          bottomRight: Radius.circular(AppConstants.radiusLarge),
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
         ), // BorderRadius.only
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).primaryColor.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ), // BoxShadow
+        ],
       ), // BoxDecoration
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Selamat Datang! 👋',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ), // Text
+                        const SizedBox(height: 8),
+                        Text(
+                          userName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                        ), // Text
+                      ],
+                    ),
+                  ), // Column
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ), // BoxDecoration
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.white,
+                        size: 26,
+                      ), // Icon
+                      onPressed: () {},
+                    ), // IconButton
+                  ), // Container
+                ],
+              ), // Row
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ), // EdgeInsets.symmetric
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ), // BoxDecoration
+                child: Row(
                   children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      color: Colors.white.withOpacity(0.9),
+                      size: 18,
+                    ), // Icon
+                    const SizedBox(width: 12),
                     Text(
-                      'Selamat Datang,',
+                      'Update: ${_formatDate(DateTime.now())}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 14,
-                      ),
-                    ), // Text
-                    const SizedBox(height: 4),
-                    Text(
-                      userName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ), // Text
                   ],
-                ), // Column
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 28,
-                  ), // Icon
-                ), // CircleAvatar
-              ],
-            ), // Row
-            const SizedBox(height: AppConstants.paddingMedium),
-            Text(
-              'Data Mahasiswa D4TI',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 14,
-              ),
-            ), // Text
-          ],
+                ), // Row
+              ), // Container
+            ],
+          ),
         ),
       ),
     ); // Container
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}, ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
