@@ -36,7 +36,7 @@ class DosenPage extends ConsumerWidget {
             ref.read(dosenNotifierProvider.notifier).refresh();
           },
         ), // CustomErrorWidget
-        // State: memanggil data dosen dari dosen list dan memanggil widget
+        // State: Data loaded
         data: (dosenList) {
           return DosenListView(
             dosenList: dosenList,

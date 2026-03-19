@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:d4tivokasi/core/constants/constants.dart';
 import 'package:d4tivokasi/core/widgets/widgets.dart';
-import 'package:d4tivokasi/features/mahasiswa/presentation/providers/mahasiswa_provider.dart';
-import 'package:d4tivokasi/features/mahasiswa/presentation/widgets/mahasiswa_widget.dart';
+import '../providers/mahasiswa_provider.dart';
+import '../widgets/mahasiswa_widget.dart';
 
 class MahasiswaPage extends ConsumerWidget {
   const MahasiswaPage({super.key});
@@ -18,32 +19,43 @@ class MahasiswaPage extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            onPressed: () {
-              ref.invalidate(mahasiswaNotifierProvider);
-            },
+            onPressed: () => ref.invalidate(mahasiswaNotifierProvider),
             tooltip: 'Refresh',
           ),
         ],
       ),
       body: mahasiswaState.when(
-        // State: Loading
         loading: () => const LoadingWidget(),
-
-        // State: Error
         error: (error, stack) => CustomErrorWidget(
           message: 'Gagal memuat data mahasiswa: ${error.toString()}',
-          onRetry: () {
-            ref.read(mahasiswaNotifierProvider.notifier).refresh();
-          },
+          onRetry: () => ref.read(mahasiswaNotifierProvider.notifier).refresh(),
         ),
-
-        // State: Data tersedia
-        data: (mahasiswaList) => MahasiswaListView(
-          mahasiswaList: mahasiswaList,
-          onRefresh: () {
-            ref.invalidate(mahasiswaNotifierProvider);
-          },
-        ),
+        data: (mahasiswaList) {
+          return RefreshIndicator(
+            onRefresh: () async => ref.invalidate(mahasiswaNotifierProvider),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(AppConstants.paddingMedium),
+              itemCount: mahasiswaList.length,
+              itemBuilder: (context, index) {
+                return MahasiswaCard(
+                  mahasiswa: mahasiswaList[index],
+                  gradientColors:
+                      AppConstants.dashboardGradients[index %
+                          AppConstants.dashboardGradients.length],
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Detail: ${mahasiswaList[index].name}'),
+                        behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

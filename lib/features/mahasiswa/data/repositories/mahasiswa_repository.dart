@@ -1,74 +1,58 @@
+import 'dart:convert';
 import 'package:d4tivokasi/features/mahasiswa/data/models/mahasiswa_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
+// ============================================================
+// MahasiswaRepository menggunakan HTTP
+// API: https://jsonplaceholder.typicode.com/comments
+// ============================================================
 class MahasiswaRepository {
-  /// Mendapatkan daftar mahasiswa
   Future<List<MahasiswaModel>> getMahasiswaList() async {
-    // Simulasi network delay
-    await Future.delayed(const Duration(seconds: 1));
+    final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/comments'),
+      headers: {'Accept': 'application/json'},
+    );
 
-    // Data dummy mahasiswa
-    return [
-      MahasiswaModel(
-        nama: 'Budi Santoso',
-        nim: '2021001',
-        email: 'budi.santoso@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '6',
-      ),
-      MahasiswaModel(
-        nama: 'Siti Rahayu',
-        nim: '2021002',
-        email: 'siti.rahayu@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '6',
-      ),
-      MahasiswaModel(
-        nama: 'Ahmad Fauzi',
-        nim: '2022001',
-        email: 'ahmad.fauzi@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '4',
-      ),
-      MahasiswaModel(
-        nama: 'Dewi Lestari',
-        nim: '2022002',
-        email: 'dewi.lestari@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '4',
-      ),
-      MahasiswaModel(
-        nama: 'Rizky Pratama',
-        nim: '2023001',
-        email: 'rizky.pratama@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '2',
-      ),
-      MahasiswaModel(
-        nama: 'Nurul Hidayah',
-        nim: '2023002',
-        email: 'nurul.hidayah@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '2',
-      ),
-      MahasiswaModel(
-        nama: 'Fajar Setiawan',
-        nim: '2020001',
-        email: 'fajar.setiawan@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '8',
-      ),
-      MahasiswaModel(
-        nama: 'Indah Permata',
-        nim: '2020002',
-        email: 'indah.permata@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '8',
-      ),
-    ];
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      print(data); // Debug
+      return data.map((json) => MahasiswaModel.fromJson(json)).toList();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      throw Exception('Gagal memuat data mahasiswa: ${response.statusCode}');
+    }
   }
+}
 
-  /// Refresh data mahasiswa
-  Future<List<MahasiswaModel>> refreshMahasiswa() async {
-    return getMahasiswaList();
+// ============================================================
+// MahasiswaRepositoryDio menggunakan Dio
+// API: https://jsonplaceholder.typicode.com/comments
+// ============================================================
+class MahasiswaRepositoryDio {
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://jsonplaceholder.typicode.com',
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      headers: {'Accept': 'application/json'},
+    ),
+  );
+
+  Future<List<MahasiswaModel>> getMahasiswaList() async {
+    try {
+      final response = await _dio.get('/comments');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        print(data); // Debug
+        return data.map((json) => MahasiswaModel.fromJson(json)).toList();
+      } else {
+        throw Exception('Gagal memuat data: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print('DioError: ${e.message}');
+      throw Exception('Gagal memuat data mahasiswa: ${e.message}');
+    }
   }
 }

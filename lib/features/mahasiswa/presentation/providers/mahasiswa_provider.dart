@@ -1,14 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../mahasiswa/data/models/mahasiswa_model.dart';
-import '../../../mahasiswa/data/repositories/mahasiswa_repository.dart';
+import 'package:d4tivokasi/features/mahasiswa/data/models/mahasiswa_model.dart';
+import 'package:d4tivokasi/features/mahasiswa/data/repositories/mahasiswa_repository.dart';
 
+// Provider HTTP
 final mahasiswaRepositoryProvider = Provider<MahasiswaRepository>((ref) {
   return MahasiswaRepository();
 });
 
+// Provider Dio
+final mahasiswaRepositoryDioProvider = Provider<MahasiswaRepositoryDio>((ref) {
+  return MahasiswaRepositoryDio();
+});
+
+// StateNotifier menggunakan Dio
 class MahasiswaNotifier
     extends StateNotifier<AsyncValue<List<MahasiswaModel>>> {
-  final MahasiswaRepository _repository;
+  final MahasiswaRepositoryDio _repository;
 
   MahasiswaNotifier(this._repository) : super(const AsyncValue.loading()) {
     loadMahasiswaList();
@@ -34,6 +41,6 @@ final mahasiswaNotifierProvider =
       MahasiswaNotifier,
       AsyncValue<List<MahasiswaModel>>
     >((ref) {
-      final repository = ref.watch(mahasiswaRepositoryProvider);
+      final repository = ref.watch(mahasiswaRepositoryDioProvider);
       return MahasiswaNotifier(repository);
     });

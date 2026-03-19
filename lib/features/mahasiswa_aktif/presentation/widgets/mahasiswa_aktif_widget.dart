@@ -21,8 +21,10 @@ class MahasiswaAktifListView extends StatelessWidget {
           children: [
             Icon(Icons.person_off_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('Tidak ada mahasiswa aktif',
-                style: TextStyle(color: Colors.grey, fontSize: 16)),
+            Text(
+              'Tidak ada mahasiswa aktif',
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
           ],
         ),
       );
@@ -33,9 +35,7 @@ class MahasiswaAktifListView extends StatelessWidget {
       child: CustomScrollView(
         slivers: [
           // Header statistik
-          SliverToBoxAdapter(
-            child: _buildStatsHeader(context),
-          ),
+          SliverToBoxAdapter(child: _buildStatsHeader(context)),
           // List mahasiswa aktif
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -58,9 +58,9 @@ class MahasiswaAktifListView extends StatelessWidget {
     final avgIpk = mahasiswaAktifList.isEmpty
         ? 0.0
         : mahasiswaAktifList
-                .map((m) => double.tryParse(m.ipk) ?? 0)
-                .reduce((a, b) => a + b) /
-            mahasiswaAktifList.length;
+                  .map((m) => double.tryParse(m.ipk) ?? 0)
+                  .reduce((a, b) => a + b) /
+              mahasiswaAktifList.length;
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -120,10 +120,7 @@ class MahasiswaAktifListView extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
         ),
       ],
     );
@@ -166,9 +163,10 @@ class _MahasiswaAktifCardState extends State<MahasiswaAktifCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.97,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -177,8 +175,7 @@ class _MahasiswaAktifCardState extends State<MahasiswaAktifCard>
     super.dispose();
   }
 
-  List<Color> get _cardGradient =>
-      _gradients[widget.index % _gradients.length];
+  List<Color> get _cardGradient => _gradients[widget.index % _gradients.length];
 
   @override
   Widget build(BuildContext context) {
@@ -230,9 +227,7 @@ class _MahasiswaAktifCardState extends State<MahasiswaAktifCard>
                   ),
                   child: Center(
                     child: Text(
-                      widget.mahasiswaAktif.nama
-                          .substring(0, 1)
-                          .toUpperCase(),
+                      widget.mahasiswaAktif.nama.substring(0, 1).toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
@@ -264,12 +259,15 @@ class _MahasiswaAktifCardState extends State<MahasiswaAktifCard>
                           // Badge Aktif
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: Colors.green.withOpacity(0.5)),
+                                color: Colors.green.withOpacity(0.5),
+                              ),
                             ),
                             child: const Text(
                               'Aktif',
@@ -283,8 +281,10 @@ class _MahasiswaAktifCardState extends State<MahasiswaAktifCard>
                         ],
                       ),
                       const SizedBox(height: 6),
-                      _buildInfoRow(Icons.badge_outlined,
-                          'NIM: ${widget.mahasiswaAktif.nim}'),
+                      _buildInfoRow(
+                        Icons.badge_outlined,
+                        'NIM: ${widget.mahasiswaAktif.nim}',
+                      ),
                       const SizedBox(height: 3),
                       _buildInfoRow(
                         Icons.calendar_today_outlined,
@@ -336,9 +336,10 @@ class _MahasiswaAktifCardState extends State<MahasiswaAktifCard>
           child: Text(
             text,
             style: TextStyle(
-                fontSize: 12,
-                color: valueColor ?? Colors.grey[700],
-                fontWeight: valueColor != null ? FontWeight.w600 : null),
+              fontSize: 12,
+              color: valueColor ?? Colors.grey[700],
+              fontWeight: valueColor != null ? FontWeight.w600 : null,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

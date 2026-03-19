@@ -1,78 +1,60 @@
+import 'dart:convert';
 import 'package:d4tivokasi/features/mahasiswa_aktif/data/models/mahasiswa_aktif_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
+// ============================================================
+// MahasiswaAktifRepository menggunakan HTTP
+// API: https://jsonplaceholder.typicode.com/posts
+// ============================================================
 class MahasiswaAktifRepository {
-  /// Mendapatkan daftar mahasiswa aktif
   Future<List<MahasiswaAktifModel>> getMahasiswaAktifList() async {
-    // Simulasi network delay
-    await Future.delayed(const Duration(seconds: 1));
+    final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/posts'),
+      headers: {'Accept': 'application/json'},
+    );
 
-    // Data dummy mahasiswa aktif
-    return [
-      MahasiswaAktifModel(
-        nama: 'Agus Pratama',
-        nim: '2022001',
-        email: 'agus.pratama@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '4',
-        status: 'Aktif',
-        tahunMasuk: '2022',
-        ipk: '3.75',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Bella Safira',
-        nim: '2022002',
-        email: 'bella.safira@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '4',
-        status: 'Aktif',
-        tahunMasuk: '2022',
-        ipk: '3.90',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Candra Wijaya',
-        nim: '2023001',
-        email: 'candra.wijaya@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '2',
-        status: 'Aktif',
-        tahunMasuk: '2023',
-        ipk: '3.60',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Diana Putri',
-        nim: '2023002',
-        email: 'diana.putri@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '2',
-        status: 'Aktif',
-        tahunMasuk: '2023',
-        ipk: '3.85',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Eko Wahyudi',
-        nim: '2021003',
-        email: 'eko.wahyudi@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '6',
-        status: 'Aktif',
-        tahunMasuk: '2021',
-        ipk: '3.50',
-      ),
-      MahasiswaAktifModel(
-        nama: 'Fitri Anggraini',
-        nim: '2021004',
-        email: 'fitri.anggraini@student.ac.id',
-        jurusan: 'Teknik Informatika',
-        semester: '6',
-        status: 'Aktif',
-        tahunMasuk: '2021',
-        ipk: '3.95',
-      ),
-    ];
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      print(data); // Debug
+      return data.map((json) => MahasiswaAktifModel.fromJson(json)).toList();
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      throw Exception(
+        'Gagal memuat data mahasiswa aktif: ${response.statusCode}',
+      );
+    }
   }
+}
 
-  /// Refresh data mahasiswa aktif
-  Future<List<MahasiswaAktifModel>> refreshMahasiswaAktif() async {
-    return getMahasiswaAktifList();
+// ============================================================
+// MahasiswaAktifRepositoryDio menggunakan Dio
+// API: https://jsonplaceholder.typicode.com/posts
+// ============================================================
+class MahasiswaAktifRepositoryDio {
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://jsonplaceholder.typicode.com',
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      headers: {'Accept': 'application/json'},
+    ),
+  );
+
+  Future<List<MahasiswaAktifModel>> getMahasiswaAktifList() async {
+    try {
+      final response = await _dio.get('/posts');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        print(data); // Debug
+        return data.map((json) => MahasiswaAktifModel.fromJson(json)).toList();
+      } else {
+        throw Exception('Gagal memuat data: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print('DioError: ${e.message}');
+      throw Exception('Gagal memuat data mahasiswa aktif: ${e.message}');
+    }
   }
 }
