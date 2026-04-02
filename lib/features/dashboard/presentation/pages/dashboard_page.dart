@@ -15,14 +15,14 @@ class DashboardPage extends ConsumerWidget {
   // get icon
   IconData _getIconForStat(String title) {
     switch (title) {
-      case 'Total Mahasiswa':
+      case 'Mahasiswa':
         return Icons.school_rounded;
       case 'Mahasiswa Aktif':
         return Icons.person_outline_rounded;
-      case 'Mahasiswa Lulus':
-        return Icons.workspace_premium_rounded;
       case 'Dosen':
         return Icons.people_outline_rounded;
+      case 'Profil':
+        return Icons.person_pin_rounded;
       default:
         return Icons.analytics_outlined;
     }
@@ -236,7 +236,7 @@ class DashboardPage extends ConsumerWidget {
                                 Widget? targetPage;
 
                                 switch (statTitle) {
-                                  case 'Total Mahasiswa':
+                                  case 'Mahasiswa':
                                     targetPage = const MahasiswaPage();
                                     break;
                                   case 'Mahasiswa Aktif':
@@ -245,7 +245,7 @@ class DashboardPage extends ConsumerWidget {
                                   case 'Dosen':
                                     targetPage = const DosenPage();
                                     break;
-                                  case 'Profile':
+                                  case 'Profil':
                                     targetPage = const ProfilePage();
                                     break;
                                 }

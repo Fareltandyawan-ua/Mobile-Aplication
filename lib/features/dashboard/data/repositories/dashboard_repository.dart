@@ -12,30 +12,30 @@ class DashboardRepository {
       lastUpdate: DateTime.now(),
       stats: [
         DashboardStats(
-          title: 'Total Mahasiswa',
+          title: 'Mahasiswa',
           value: '1,234',
-          subtitle: 'Mahasiswa terdaftar',
+          subtitle: 'Data mahasiswa',
           // percentage: 8.5,
           // isIncrease: true,
         ), // DashboardStats
         DashboardStats(
           title: 'Mahasiswa Aktif',
           value: '1,180',
-          subtitle: 'Sedang kuliah',
+          subtitle: 'Sedang aktif kuliah',
           // percentage: 5.2,
           // isIncrease: true,
         ), // DashboardStats
         DashboardStats(
-          title: 'Jumlah Kelas',
+          title: 'Dosen',
           value: '48',
-          subtitle: 'Kelas semester ini',
+          subtitle: 'Data dosen',
           // percentage: 2.1,
           // isIncrease: false,
         ), // DashboardStats
         DashboardStats(
-          title: 'Tingkat Kelulusan',
-          value: '94%',
-          subtitle: 'Tahun ini',
+          title: 'Profil',
+          value: 'Lihat',
+          subtitle: 'Informasi profil',
           // percentage: 3.5,
           // isIncrease: true,
         ), // DashboardStats

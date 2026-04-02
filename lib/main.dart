@@ -2,10 +2,6 @@ import 'package:d4tivokasi/core/constants/constants.dart';
 import 'package:d4tivokasi/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:d4tivokasi/features/dosen/presentation/pages/dosen_page.dart';
-import 'package:d4tivokasi/features/mahasiswa/presentation/pages/mahasiswa_page.dart';
-import 'package:d4tivokasi/features/mahasiswa_aktif/presentation/pages/mahasiswa_aktif_page.dart';
-import 'package:d4tivokasi/features/profile/presentation/pages/profile_page.dart';
 import 'package:d4tivokasi/features/dashboard/presentation/pages/dashboard_page.dart';
 
 void main() {
@@ -25,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
-      home: const MahasiswaAktifPage(),
+      home: const DashboardPage(),
     ); // MaterialApp
   }
 }

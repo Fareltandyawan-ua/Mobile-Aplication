@@ -1,3 +1,6 @@
+// ============================================================
+// MahasiswaModel - dari API /comments
+// ============================================================
 class MahasiswaModel {
   final int postId;
   final int id;
